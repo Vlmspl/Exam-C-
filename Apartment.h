@@ -1,5 +1,5 @@
 #pragma once
-#include "text.h"
+#include "Text.h"
 
 struct Resident {
 	Text name;

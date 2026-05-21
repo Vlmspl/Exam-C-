@@ -1,4 +1,4 @@
-#include "apartment.h"
+#include "Apartment.h"
 
 void addResident(Apartment& apartment, const Text& name, const int age)
 {

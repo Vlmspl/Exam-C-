@@ -1,4 +1,4 @@
-#include "text.h"
+#include "Text.h"
 #include <iostream>
 using namespace std;
 
