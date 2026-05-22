@@ -18,6 +18,7 @@ int main()
 	while (true)
     {
         printf("\n===== HOUSE MANAGER =====\n");
+
         printf("1. Fill random house\n");
         printf("2. Add floor\n");
         printf("3. Add apartment\n");
@@ -26,9 +27,17 @@ int main()
         printf("6. Remove apartment\n");
         printf("7. Save to file\n");
         printf("8. Load from file\n");
-        printf("9. Print apartment\n");
-        printf("10. Clear house\n");
-        printf("0. Exit\n");
+        printf("9. Clear house\n");
+
+	    printf("\n--- REPORTS ---\n");
+
+	    printf("10. Print all residents\n");
+	    printf("11. Print all apartments\n");
+	    printf("12. Print apartment info\n");
+	    printf("13. Print floor apartments\n");
+	    printf("14. Print apartments by size\n");
+
+        printf("\n0. Exit\n");
 
         printf("Choice: ");
         cin >> choice;
@@ -58,29 +67,36 @@ int main()
 
         else if (choice == 3)
         {
-            size_t floor_index;
+            int floor_index;
             printf("Floor index: ");
             cin >> floor_index;
 
-            if (floor_index < house.count)
+            floor_index--;
+
+            if (floor_index >= 0 && (size_t)floor_index < house.count)
             {
                 Apartment ap{};
                 ap.residents = nullptr;
                 ap.count = 0;
 
-                addApartment(house.floors[floor_index], ap);
+                addApartment(house.floors[(size_t)floor_index], ap);
             }
         }
 
         else if (choice == 4)
         {
-            size_t floor_index, apartment_index;
+            int floor_index, apartment_index;
             printf("Floor index: ");
             cin >> floor_index;
             printf("Apartment index: ");
             cin >> apartment_index;
 
-            if (floor_index < house.count && apartment_index < house.floors[floor_index].count)
+            floor_index--;
+            apartment_index--;
+
+            if (floor_index >= 0 && apartment_index >= 0 &&
+                (size_t)floor_index < house.count &&
+                (size_t)apartment_index < house.floors[(size_t)floor_index].count)
             {
                 char temp[128];
                 int age;
@@ -93,32 +109,45 @@ int main()
 
                 Text text = create(temp);
 
-                addResident(house.floors[floor_index].apartments[apartment_index], text, age);
+                addResident(house.floors[(size_t)floor_index].apartments[(size_t)apartment_index], text, age);
             }
         }
 
         else if (choice == 5)
         {
-            size_t floor_index, apartment_index, resident_index;
+            int floor_index, apartment_index, resident_index;
             printf("Floor / apartment / resident index: ");
-            cin >> floor_index >> apartment_index >> resident_index ;
+            cin >> floor_index >> apartment_index >> resident_index;
 
-            if (floor_index < house.count &&
-                apartment_index < house.floors[floor_index].count)
+            floor_index--;
+            apartment_index--;
+            resident_index--;
+
+            if (floor_index >= 0 && apartment_index >= 0 && resident_index >= 0 &&
+                (size_t)floor_index < house.count &&
+                (size_t)apartment_index < house.floors[(size_t)floor_index].count)
             {
-                removeResident(house.floors[floor_index].apartments[apartment_index], resident_index);
+                removeResident(
+                    house.floors[(size_t)floor_index].apartments[(size_t)apartment_index],
+                    (size_t)resident_index
+                );
             }
         }
 
         else if (choice == 6)
         {
-            size_t floor_index, apartment_index;
+            int floor_index, apartment_index;
             printf("Floor / apartment index: ");
             cin >> floor_index >> apartment_index;
 
-            if (floor_index < house.count)
+            floor_index--;
+            apartment_index--;
+
+            if (floor_index >= 0 && apartment_index >= 0 &&
+                (size_t)floor_index < house.count &&
+                (size_t)apartment_index < house.floors[(size_t)floor_index].count)
             {
-                removeApartment(house.floors[floor_index], apartment_index);
+                removeApartment(house.floors[(size_t)floor_index], (size_t)apartment_index);
             }
         }
 
@@ -155,21 +184,126 @@ int main()
 
         else if (choice == 9)
         {
-            size_t floor_index, apartment_index;
-            printf("Floor / apartment index: ");
-            cin >> floor_index >> apartment_index;
-
-            if (floor_index < house.count &&
-                apartment_index < house.floors[floor_index].count)
-            {
-                printApartment(house.floors[floor_index].apartments[apartment_index]);
-            }
+            clearHouse(house);
+            printf("House cleared.\n");
         }
 
         else if (choice == 10)
         {
-            clearHouse(house);
-            printf("House cleared.\n");
+            for (size_t i = 0; i < house.count; i++)
+            {
+                printf("Floor %zu\n", i + 1);
+
+                for (size_t j = 0; j < house.floors[i].count; j++)
+                {
+                    printf(" - Apartment %zu\n", j + 1);
+
+                    for (size_t k = 0; k < house.floors[i].apartments[j].count; k++)
+                    {
+                        Resident& resident = house.floors[i].apartments[j].residents[k];
+
+                        printf("   * %s (%d)\n",
+                            resident.name.text,
+                            resident.age);
+                    }
+
+                    printf("\n");
+                }
+
+                printf("\n");
+            }
+        }
+
+        else if (choice == 11)
+        {
+            for (size_t i = 0; i < house.count; i++)
+            {
+                printf("Floor %zu\n", i + 1);
+
+                for (size_t j = 0; j < house.floors[i].count; j++)
+                {
+                    printf(" - Apartment %zu | Residents: %zu\n",
+                        j + 1,
+                        house.floors[i].apartments[j].count);
+                }
+
+                printf("\n");
+            }
+        }
+
+        else if (choice == 12)
+        {
+            int floor_index, apartment_index;
+            printf("Floor / apartment index: ");
+            cin >> floor_index >> apartment_index;
+
+            floor_index--;
+            apartment_index--;
+
+            if (floor_index >= 0 && apartment_index >= 0 &&
+                (size_t)floor_index < house.count &&
+                (size_t)apartment_index < house.floors[(size_t)floor_index].count)
+            {
+                printApartment(house.floors[(size_t)floor_index].apartments[(size_t)apartment_index]);
+            }
+        }
+
+        else if (choice == 13)
+        {
+            int floor_index;
+            printf("Floor: ");
+            cin >> floor_index;
+
+            floor_index--;
+
+            if (floor_index >= 0 && (size_t)floor_index < house.count)
+            {
+                Floor& floor = house.floors[(size_t)floor_index];
+
+                printf("Floor %d:\n", floor_index + 1);
+
+                for (size_t i = 0; i < floor.count; i++)
+                {
+                    printf(" Apartment %zu | Residents: %zu\n",
+                        i + 1,
+                        floor.apartments[i].count);
+                }
+            }
+        }
+
+        else if (choice == 14)
+        {
+            size_t size;
+            printf("Apartment size: ");
+            cin >> size;
+
+            bool found = false;
+
+            for (size_t i = 0; i < house.count; i++)
+            {
+                bool floorPrinted = false;
+
+                for (size_t j = 0; j < house.floors[i].count; j++)
+                {
+                    if (house.floors[i].apartments[j].count == size)
+                    {
+                        if (!floorPrinted)
+                        {
+                            printf("Floor %zu\n", i + 1);
+                            floorPrinted = true;
+                        }
+
+                        printf(" - Apartment %zu\n", j + 1);
+                        found = true;
+                    }
+                }
+
+                if (floorPrinted)
+                    printf("\n");
+            }
+
+            if (!found)
+                printf("No apartments found with size %zu\n", size);
         }
     }
 
