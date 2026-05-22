@@ -55,3 +55,30 @@ void addFloor(House& house, Floor& floor)
 
 	house.count++;
 }
+
+void clearHouse(House& house)
+{
+	for (size_t i = 0; i < house.count; i++)
+	{
+		Floor& floor = house.floors[i];
+
+		for (size_t j = 0; j < floor.count; j++)
+		{
+			Apartment& apartment = floor.apartments[j];
+
+			for (size_t k = 0; k < apartment.count; k++)
+			{
+				remove(apartment.residents[k].name);
+			}
+
+			delete[] apartment.residents;
+		}
+
+		delete[] floor.apartments;
+	}
+
+	delete[] house.floors;
+
+	house.floors = nullptr;
+	house.count = 0;
+}

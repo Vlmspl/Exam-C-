@@ -19,3 +19,4 @@ struct House
 };
 
 void addFloor(House& house, Floor& floor);
+void clearHouse(House& house);
