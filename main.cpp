@@ -157,6 +157,19 @@ int main()
             printf("File name to save: ");
             cin >> filename;
 
+            bool has_extension = false;
+            for (int i = 0; filename[i] != '\0'; i++)
+            {
+                if (filename[i] == '.')
+                {
+                    has_extension = true;
+                    break;
+                }
+            }
+
+            if (!has_extension)
+                strcat_s(filename, ".house_data");
+
             saveHouse(house, filename);
         }
 
@@ -165,6 +178,19 @@ int main()
             char filename[256];
             printf("File name to load: ");
             cin >> filename;
+
+            bool has_extension = false;
+            for (int i = 0; filename[i] != '\0'; i++)
+            {
+                if (filename[i] == '.')
+                {
+                    has_extension = true;
+                    break;
+                }
+            }
+
+            if (!has_extension)
+                strcat_s(filename, ".house_data");
 
             FILE* f = fopen(filename, "rb");
             if (!f)
